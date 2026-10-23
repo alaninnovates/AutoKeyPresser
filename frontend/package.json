@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:dev": "tsc && vite build --minify false --mode development",
+    "build": "tsc && vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@wailsio/runtime": "latest",
     "@mantine/charts": "^9.7.3",
     "@mantine/core": "^9.7.3",
     "@mantine/hooks": "^9.7.3",
@@ -28,5 +30,9 @@
     "postcss-simple-vars": "^7.0.1",
     "typescript": "^5.6.3",
     "vite": "^7.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
   }
 }
