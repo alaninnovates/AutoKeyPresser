@@ -126,6 +126,19 @@ export const KeyPresserPanel = () => {
                                 pt='sm'
                                 description="Repeat Interval"
                                 placeholder="0"
+                                value={action.repeatInterval}
+                                onChange={async (value) => {
+                                    const val = value.valueOf();
+                                    if (typeof val !== 'number') return;
+                                    await UpdateAction({
+                                        ...action,
+                                        repeatInterval: val || 0,
+                                    });
+                                    const actions = await GetAll();
+                                    if (!actions) return;
+                                    setActions(actions);
+                                }}
+                                min={0}
                             />
                         )}
                     </Card>
