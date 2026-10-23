@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
@@ -125,29 +124,29 @@ func (s *KeyPresserService) start() {
 					if action.Repeat {
 						if action.Type == ActionTypeKeyboard {
 							err := robotgo.KeyTap(action.Key)
-							fmt.Println("Pressed key:", action.Key)
+							//fmt.Println("Pressed key:", action.Key)
 							if err != nil {
 								return
 							}
 						} else if action.Type == ActionTypeMouse {
 							err := robotgo.Click(action.Button)
-							fmt.Println("Clicked mouse button:", action.Button)
+							//fmt.Println("Clicked mouse button:", action.Button)
 							if err != nil {
 								return
 							}
 						}
-						fmt.Println("Sleeping for", action.RepeatInterval, "ms")
+						//fmt.Println("Sleeping for", action.RepeatInterval, "ms")
 						time.Sleep(time.Duration(action.RepeatInterval) * time.Millisecond)
 					} else if action.Hold {
 						if action.Type == ActionTypeKeyboard {
 							err := robotgo.KeyDown(action.Key)
-							fmt.Println("Down key:", action.Key)
+							//fmt.Println("Down key:", action.Key)
 							if err != nil {
 								return
 							}
 						} else if action.Type == ActionTypeMouse {
 							err := robotgo.MouseDown(action.Button)
-							fmt.Println("Down mouse button:", action.Button)
+							//fmt.Println("Down mouse button:", action.Button)
 							if err != nil {
 								return
 							}
@@ -166,13 +165,13 @@ func (s *KeyPresserService) stop() {
 		if action.Hold {
 			if action.Type == ActionTypeKeyboard {
 				err := robotgo.KeyUp(action.Key)
-				fmt.Println("Up key:", action.Key)
+				//fmt.Println("Up key:", action.Key)
 				if err != nil {
 					return
 				}
 			} else if action.Type == ActionTypeMouse {
 				err := robotgo.MouseUp(action.Button)
-				fmt.Println("Up mouse button:", action.Button)
+				//fmt.Println("Up mouse button:", action.Button)
 				if err != nil {
 					return
 				}
