@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"sync"
+
+	"github.com/go-vgo/robotgo"
 )
 
 type ActionType string
@@ -25,6 +28,8 @@ type KeyPresserService struct {
 	actions []Action
 	nextID  int
 	mu      sync.RWMutex
+	ctx     context.Context
+	cancel  context.CancelFunc
 }
 
 func NewKeyPresserService() *KeyPresserService {
@@ -100,4 +105,39 @@ func (s *KeyPresserService) DeleteAction(id int) error {
 	}
 
 	return nil
+}
+
+func (s *KeyPresserService) start() {
+	ctx, cancel := context.WithCancel(context.Background())
+	s.ctx = ctx
+	s.cancel = cancel
+
+	go func() {
+		select {
+		case <-s.ctx.Done():
+			return
+		default:
+			s.mu.RLock()
+			for _, action := range s.actions {
+				if action.Repeat {
+					if action.Type == ActionTypeKeyboard {
+						err := robotgo.KeyTap(action.Key)
+						if err != nil {
+							return
+						}
+					} else if action.Type == ActionTypeMouse {
+						err := robotgo.Click(action.Button)
+						if err != nil {
+							return
+						}
+					}
+				}
+			}
+			s.mu.RUnlock()
+		}
+	}()
+}
+
+func (s *KeyPresserService) stop() {
+	s.cancel()
 }
