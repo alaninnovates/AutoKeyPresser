@@ -16,18 +16,23 @@ import {
 import {GearIcon} from '@phosphor-icons/react';
 import {useState} from "react";
 import {KeyPresserPanel} from "./KeyPresserPanel";
+import {SetActiveTab} from "../bindings/AutoKeyPresser/appservice";
+import {ActiveTab} from "../bindings/AutoKeyPresser";
 
 function App() {
     const [activeTab, setActiveTab] = useState<string | null>('key_presser');
 
     return (
         <AppShell>
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs value={activeTab} onChange={async (value) => {
+                const newAT = await SetActiveTab(value as any);
+                setActiveTab(newAT);
+            }}>
                 <AppShellHeader p='xs' display="flex" style={{gap: "1rem", justifyContent: "space-between"}}>
                     <TabsList>
-                        <TabsTab value="key_presser">Key Presser</TabsTab>
-                        <TabsTab value="slime">Slime Killer</TabsTab>
-                        <TabsTab value="fisher">Auto Fisher</TabsTab>
+                        <TabsTab value={ActiveTab.ActiveTabKeyPresser}>Key Presser</TabsTab>
+                        <TabsTab value={ActiveTab.ActiveTabSlime}>Slime Killer</TabsTab>
+                        <TabsTab value={ActiveTab.ActiveTabFisher}>Auto Fisher</TabsTab>
                     </TabsList>
                     <ActionIcon size="lg" radius="xl"
                                 onClick={() => console.log("Settings clicked")}>

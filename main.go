@@ -21,8 +21,11 @@ func main() {
 		},
 	})
 
-	app.RegisterService(application.NewService(NewAppService(app)))
-	app.RegisterService(application.NewService(NewKeyPresserService()))
+	keyPresserService := NewKeyPresserService()
+	appService := NewAppService(app, keyPresserService)
+
+	app.RegisterService(application.NewService(keyPresserService))
+	app.RegisterService(application.NewService(appService))
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:  "AutoKeyPresser",
