@@ -20,3 +20,14 @@ export enum ActionType {
     ActionTypeKeyboard = "keyboard",
     ActionTypeMouse = "mouse",
 };
+
+export enum ActiveTab {
+    /**
+     * The Go zero value for the underlying type of the enum.
+     */
+    $zero = "",
+
+    ActiveTabKeyPresser = "key_presser",
+    ActiveTabSlime = "slime",
+    ActiveTabFisher = "fisher",
+};
