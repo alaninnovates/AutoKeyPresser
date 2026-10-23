@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Action, ActionType} from "../bindings/AutoKeyPresser";
 import {ActionIcon, Card, Group, NumberInput, Radio, ScrollArea, Scroller, Stack, Switch, Text} from "@mantine/core";
 import {KeyboardIcon, MouseIcon, XIcon} from "@phosphor-icons/react";
-import {AddEmptyAction, DeleteAction, GetAll} from "../bindings/AutoKeyPresser/keypresserservice";
+import {AddEmptyAction, DeleteAction, GetAll, UpdateAction} from "../bindings/AutoKeyPresser/keypresserservice";
 
 const characters = [
     'Shift', 'Ctrl', 'Alt', 'Meta',
@@ -12,32 +12,6 @@ const characters = [
     '`', '-', '=', '[', '\\', ';', '\'', ',', '.', '/', '~',
     '_', '+', '{', '|', ':', '"', '<', '>', '?'
 ];
-
-/*
-[
-        {
-            type: ActionType.ActionTypeKeyboard,
-            key: 'Shift',
-            hold: true,
-            repeat: false,
-            repeatInterval: 0,
-        },
-        {
-            type: ActionType.ActionTypeKeyboard,
-            key: 'd',
-            hold: true,
-            repeat: false,
-            repeatInterval: 0,
-        },
-        {
-            type: ActionType.ActionTypeMouse,
-            button: 'left',
-            hold: false,
-            repeat: true,
-            repeatInterval: 1000,
-        }
-    ]
- */
 
 export const KeyPresserPanel = () => {
     const [actions, setActions] = useState<Action[]>([]);
@@ -77,7 +51,21 @@ export const KeyPresserPanel = () => {
                             >
                                 <Stack>
                                     {characters.map((char, charIndex) => (
-                                        <Text key={charIndex} size="sm">{char}</Text>
+                                        <Text key={charIndex} size="sm"
+                                              onClick={async () => {
+                                                    await UpdateAction({
+                                                        ...action,
+                                                        key: char,
+                                                    });
+                                                    const actions = await GetAll();
+                                                    if (!actions) return;
+                                                    setActions(actions);
+                                              }}
+                                              bg={action.key === char ? 'blue.8' : undefined}
+                                              py={2}
+                                              px={4}
+                                              style={{cursor: 'pointer', borderRadius: '4px'}}
+                                        >{char}</Text>
                                     ))}
                                 </Stack>
                             </ScrollArea>
@@ -85,7 +73,15 @@ export const KeyPresserPanel = () => {
                             <Radio.Group
                                 label="Mouse Button"
                                 value={action.button}
-                                onChange={(value) => console.log(`Mouse button changed to ${value}`)}
+                                onChange={async (value) => {
+                                    await UpdateAction({
+                                        ...action,
+                                        button: value,
+                                    });
+                                    const actions = await GetAll();
+                                    if (!actions) return;
+                                    setActions(actions);
+                                }}
                                 pb="sm"
                             >
                                 <Stack mt="xs" gap='xs'>
@@ -98,32 +94,30 @@ export const KeyPresserPanel = () => {
                         <Text fw={400} mb="xs" size='sm'>Modifiers</Text>
                         <Switch
                             checked={action.hold}
-                            onChange={(event) => {
-                                setActions(prevActions => {
-                                    const newActions = [...prevActions];
-                                    newActions[index] = {
-                                        ...newActions[index],
-                                        hold: event.target.checked,
-                                        repeat: event.target.checked ? false : newActions[index].repeat,
-                                    };
-                                    return newActions;
-                                })
+                            onChange={async (event) => {
+                                await UpdateAction({
+                                    ...action,
+                                    hold: event.target.checked,
+                                    repeat: event.target.checked ? false : action.repeat,
+                                });
+                                const actions = await GetAll();
+                                if (!actions) return;
+                                setActions(actions);
                             }}
                             label="Hold"
                         />
                         <Switch
                             pt='md'
                             checked={action.repeat}
-                            onChange={(event) => {
-                                setActions(prevActions => {
-                                    const newActions = [...prevActions];
-                                    newActions[index] = {
-                                        ...newActions[index],
-                                        repeat: event.target.checked,
-                                        hold: event.target.checked ? false : newActions[index].hold,
-                                    };
-                                    return newActions;
+                            onChange={async (event) => {
+                                await UpdateAction({
+                                    ...action,
+                                    repeat: event.target.checked,
+                                    hold: event.target.checked ? false : action.hold,
                                 });
+                                const actions = await GetAll();
+                                if (!actions) return;
+                                setActions(actions);
                             }}
                             label="Repeat"
                         />
