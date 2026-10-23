@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"sync"
+	"time"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -68,8 +70,8 @@ func (s *KeyPresserService) AddEmptyAction(actionType ActionType) (*Action, erro
 		Key:            "",
 		Button:         "",
 		Hold:           false,
-		Repeat:         false,
-		RepeatInterval: 0,
+		Repeat:         true,
+		RepeatInterval: 100,
 	}
 
 	s.nextID++
@@ -112,32 +114,70 @@ func (s *KeyPresserService) start() {
 	s.ctx = ctx
 	s.cancel = cancel
 
-	go func() {
-		select {
-		case <-s.ctx.Done():
-			return
-		default:
-			s.mu.RLock()
-			for _, action := range s.actions {
-				if action.Repeat {
-					if action.Type == ActionTypeKeyboard {
-						err := robotgo.KeyTap(action.Key)
-						if err != nil {
-							return
+	s.mu.RLock()
+	for _, action := range s.actions {
+		go func() {
+			for {
+				select {
+				case <-s.ctx.Done():
+					return
+				case <-time.After(1 * time.Millisecond):
+					if action.Repeat {
+						if action.Type == ActionTypeKeyboard {
+							err := robotgo.KeyTap(action.Key)
+							fmt.Println("Pressed key:", action.Key)
+							if err != nil {
+								return
+							}
+						} else if action.Type == ActionTypeMouse {
+							err := robotgo.Click(action.Button)
+							fmt.Println("Clicked mouse button:", action.Button)
+							if err != nil {
+								return
+							}
 						}
-					} else if action.Type == ActionTypeMouse {
-						err := robotgo.Click(action.Button)
-						if err != nil {
-							return
+						fmt.Println("Sleeping for", action.RepeatInterval, "ms")
+						time.Sleep(time.Duration(action.RepeatInterval) * time.Millisecond)
+					} else if action.Hold {
+						if action.Type == ActionTypeKeyboard {
+							err := robotgo.KeyDown(action.Key)
+							fmt.Println("Down key:", action.Key)
+							if err != nil {
+								return
+							}
+						} else if action.Type == ActionTypeMouse {
+							err := robotgo.MouseDown(action.Button)
+							fmt.Println("Down mouse button:", action.Button)
+							if err != nil {
+								return
+							}
 						}
+						return
 					}
 				}
 			}
-			s.mu.RUnlock()
-		}
-	}()
+		}()
+	}
+	s.mu.RUnlock()
 }
 
 func (s *KeyPresserService) stop() {
+	for _, action := range s.actions {
+		if action.Hold {
+			if action.Type == ActionTypeKeyboard {
+				err := robotgo.KeyUp(action.Key)
+				fmt.Println("Up key:", action.Key)
+				if err != nil {
+					return
+				}
+			} else if action.Type == ActionTypeMouse {
+				err := robotgo.MouseUp(action.Button)
+				fmt.Println("Up mouse button:", action.Button)
+				if err != nil {
+					return
+				}
+			}
+		}
+	}
 	s.cancel()
 }
