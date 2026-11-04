@@ -6,6 +6,8 @@ require (
 	github.com/go-vgo/robotgo v1.3.7
 	github.com/robotn/gohook v0.50.0
 	github.com/wailsapp/wails/v3 v3.0.0-beta.34
+	github.com/yalue/onnxruntime_go v1.38.0
+	gocv.io/x/gocv v0.43.0
 )
 
 require (

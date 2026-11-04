@@ -29,13 +29,15 @@ type AppService struct {
 	activeTab         ActiveTab
 	appStatus         AppStatus
 	keyPresserService *KeyPresserService
+	slimeService      *SlimeService
 }
 
-func NewAppService(app *application.App, keyPresserService *KeyPresserService) *AppService {
+func NewAppService(app *application.App, keyPresserService *KeyPresserService, slimeService *SlimeService) *AppService {
 	return &AppService{
 		app:               app,
 		activeTab:         ActiveTabKeyPresser,
 		keyPresserService: keyPresserService,
+		slimeService:      slimeService,
 	}
 }
 
@@ -50,10 +52,13 @@ func (s *AppService) ServiceStartup(ctx context.Context, options application.Ser
 		switch s.activeTab {
 		case ActiveTabKeyPresser:
 			s.keyPresserService.start()
+			break
 		case ActiveTabSlime:
-			// call slime service start
+			s.slimeService.start()
+			break
 		case ActiveTabFisher:
 			// call fisher service start
+			break
 		}
 	})
 	hook.Register(hook.KeyDown, []string{"f3"}, func(e hook.Event) {
@@ -62,7 +67,17 @@ func (s *AppService) ServiceStartup(ctx context.Context, options application.Ser
 		}
 		fmt.Println("f3 stop")
 		s.appStatus = AppStatusIdle
-		s.keyPresserService.stop()
+		switch s.activeTab {
+		case ActiveTabKeyPresser:
+			s.keyPresserService.stop()
+			break
+		case ActiveTabSlime:
+			s.slimeService.stop()
+			break
+		case ActiveTabFisher:
+			// call fisher service stop
+			break
+		}
 	})
 	go func() {
 		h := hook.Start()
