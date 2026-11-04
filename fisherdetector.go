@@ -104,7 +104,9 @@ func (d *FisherDetector) FindFishingMinigameBounds(img gocv.Mat) (*Bounds, error
 	var lines []Line
 
 	for i := 0; i < contours.Size(); i++ {
-		r := gocv.BoundingRect(contours.At(i))
+		contour := contours.At(i)
+		r := gocv.BoundingRect(contour)
+		contour.Close()
 
 		if r.Dx() < screenW/5 {
 			continue

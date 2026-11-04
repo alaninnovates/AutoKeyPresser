@@ -1,58 +1,3 @@
-/*
-MiniGameArea := { x: 618, y: 719, w: 1291, h: 799 }
-
-SearchBarImage(FoundX, FoundY) {
-    return ImageSearch(FoundX, FoundY, MiniGameArea.x, MiniGameArea.y, MiniGameArea.w, MiniGameArea.h, "images/bar.png")
-}
-
-SearchFishBounds(&Position) {
-    return PixelSearch(&Position, &FoundY, 632, 735, 1281, 790, 0xffffff)
-}
-
-StartFishing() {
-    while (true) {
-        ; bounds of the fish image
-        if !SearchFishBounds(&pos) {
-            break
-        }
-        ; bounds of the bar
-        if !SearchBarImage(&BarFoundX, &BarFoundY) {
-            break
-        }
-        ; keep bar within bounds of fish image
-        if (BarFoundX < pos)
-        {
-            Click "Down"
-        }
-        else if (BarFoundX > pos)
-        {
-            Click "Up"
-        }
-    }
-    Click "Up"
-}
-f1:: {
-    while (true) {
-        MouseMove 112, 138
-        Click "Down"
-        Sleep 600
-        Click "Up"
-        Sleep 2500
-        while (true)
-        {
-            ; MsgBox "Searching for " fish_type
-            if SearchFishBounds(&FoundX)
-            {
-                ; MsgBox "Found " fish_type " at " FoundX ", " FoundY
-                StartFishing()
-                break
-            }
-        }
-        Sleep 1000
-    }
-}
-*/
-
 package main
 
 import (
@@ -90,11 +35,8 @@ func FastCaptureRegion(x, y, w, h int) (gocv.Mat, error) {
 	if err != nil {
 		return gocv.Mat{}, fmt.Errorf("failed to load bytes into mat: %w", err)
 	}
-	clonedMat := mat.Clone()
-	mat.Close()
-	gocv.CvtColor(clonedMat, &clonedMat, gocv.ColorRGBAToBGRA)
-
-	return clonedMat, nil
+	gocv.CvtColor(mat, &mat, gocv.ColorRGBAToBGRA)
+	return mat, nil
 }
 
 func (s *FisherService) start() {
@@ -147,6 +89,7 @@ func (s *FisherService) start() {
 							}
 							continue
 						}
+						mat.Close()
 						//fmt.Println("found bar")
 						foundBarOnce = true
 						fishCoord, err := s.fisherDetector.FindFishCoord(img, minigameBounds)
