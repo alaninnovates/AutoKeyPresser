@@ -30,14 +30,16 @@ type AppService struct {
 	appStatus         AppStatus
 	keyPresserService *KeyPresserService
 	slimeService      *SlimeService
+	fisherService     *FisherService
 }
 
-func NewAppService(app *application.App, keyPresserService *KeyPresserService, slimeService *SlimeService) *AppService {
+func NewAppService(app *application.App, keyPresserService *KeyPresserService, slimeService *SlimeService, fisherService *FisherService) *AppService {
 	return &AppService{
 		app:               app,
 		activeTab:         ActiveTabKeyPresser,
 		keyPresserService: keyPresserService,
 		slimeService:      slimeService,
+		fisherService:     fisherService,
 	}
 }
 
@@ -57,7 +59,7 @@ func (s *AppService) ServiceStartup(ctx context.Context, options application.Ser
 			s.slimeService.start()
 			break
 		case ActiveTabFisher:
-			// call fisher service start
+			s.fisherService.start()
 			break
 		}
 	})
@@ -75,7 +77,7 @@ func (s *AppService) ServiceStartup(ctx context.Context, options application.Ser
 			s.slimeService.stop()
 			break
 		case ActiveTabFisher:
-			// call fisher service stop
+			s.fisherService.stop()
 			break
 		}
 	})

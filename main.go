@@ -23,12 +23,14 @@ func main() {
 
 	keyPresserService := NewKeyPresserService()
 	slimeService := NewSlimeService()
-	appService := NewAppService(app, keyPresserService, slimeService)
+	fisherService := NewFisherService()
+	appService := NewAppService(app, keyPresserService, slimeService, fisherService)
 
 	defer slimeService.detector.Close()
 
 	app.RegisterService(application.NewService(keyPresserService))
 	app.RegisterService(application.NewService(slimeService))
+	app.RegisterService(application.NewService(fisherService))
 	app.RegisterService(application.NewService(appService))
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{

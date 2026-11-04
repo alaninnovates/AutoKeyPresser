@@ -5,6 +5,7 @@ go 1.26.0
 require (
 	github.com/go-vgo/robotgo v1.3.7
 	github.com/robotn/gohook v0.50.0
+	github.com/vcaesar/screenshot v0.40.0
 	github.com/wailsapp/wails/v3 v3.0.0-beta.34
 	github.com/yalue/onnxruntime_go v1.38.0
 	gocv.io/x/gocv v0.43.0
@@ -33,7 +34,6 @@ require (
 	github.com/vcaesar/gops v0.43.0 // indirect
 	github.com/vcaesar/imgo v0.44.0 // indirect
 	github.com/vcaesar/keycode v0.20.0 // indirect
-	github.com/vcaesar/screenshot v0.40.0 // indirect
 	github.com/vcaesar/tt v0.40.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
