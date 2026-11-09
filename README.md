@@ -1,19 +1,13 @@
-# README
+# AutoKeyPresser
 
-## About
+Roblox utility, specifically tailored towards Islands - general key presser/mouse clicker, with configurable key combinations and mouse buttons. Also, has an automatic slime farmer and automatic fisher for the game using CV/ML.
 
-This is the official Wails React-TS template.
+## Screenshots
+Key Presser
+<img src="screenshots/key_presser.png" >
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+## Download
+> [!NOTE]
+> Currently, only MacOS is supported. Windows and Linux builds coming very soon!
 
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
+Go to the [GitHub releases page](https://github.com/alaninnovates/AutoKeyPresser/releases) and download the latest version!
